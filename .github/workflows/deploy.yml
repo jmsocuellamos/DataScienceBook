@@ -1,1 +1,24 @@
-
+name: deploy-book
+on:
+  push:
+    branches: [main]
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+jobs:
+  deploy-book:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - run: pip install -r requirements.txt
+        working-directory: ds-book
+      - run: jupyter-book build .
+        working-directory: ds-book
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: "ds-book/_build/html"
+      - uses: actions/deploy-pages@v4
